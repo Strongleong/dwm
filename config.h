@@ -1,7 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx       = 2;        /* border pixel of windows */
+static const unsigned int borderpx       = 1;        /* border pixel of windows */
 static const unsigned int snap           = 32;       /* snap pixel */
 static const int swallowfloating         = 0;        /* 1 means swallow floating windows by default */
 static const unsigned int gappih         = 10;       /* horiz inner gap between windows */
@@ -60,16 +60,20 @@ static const char *const autostart[] = {
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
+#define TAG(x) 1 << (x - 1)
+
 static const Rule rules[] = {
   /* xprop(1):
    *  WM_CLASS(STRING) = instance, class
    *  WM_NAME(STRING) = title
    */
-  /* class       instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
-  { "Gimp",      NULL,     NULL,           0,         1,          0,          0,         -1 },
-  { "Firefox",   NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
-  { "Alacritty", NULL,     NULL,           0,         0,          1,          0,         -1 },
-  { NULL,        NULL,     "Event Tester", 0,         0,          0,          1,         -1 }, /* xev */
+  /* class             instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
+  { "Gimp",            NULL,     NULL,           0,         1,          0,          0,         -1 },
+  { "Alacritty",       NULL,     NULL,           0,         0,          1,          0,         -1 },
+  { "TelegramDesktop", NULL,     NULL,           TAG(5),    0,          1,          0,         -1 },
+  { "discord",         NULL,     NULL,           TAG(6),    0,          1,          0,         -1 },
+  { "steam",           NULL,     NULL,           TAG(9),    0,          1,          0,         -1 },
+  { NULL,              NULL,     "Event Tester", 0,         0,          0,          1,         -1 }, /* xev */
 };
 
 /* layout(s) */
@@ -117,8 +121,8 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 
-// static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-l", "15", "-p", "Run:", NULL };
-static const char *dmenucmd[] = { "dmenu_desktop", dmenumon, dmenufont, col_gray1, col_gray3, col_cyan, col_gray4, "--test-flag", NULL };
+static const char *dmenuruncmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-l", "15", "-p", "Run:", NULL };
+static const char *dmenucmd[] = { "/home/strongleong/.local/bin/dmenu_desktop", dmenumon, dmenufont, col_gray1, col_gray3, col_cyan, col_gray4, "--test-flag", NULL };
 
 // static const char *dmenudesktopcmd[] = { "j4-dmenu-desktop", dmenuarg, "--term='alacritty'", "--no-generic", NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
@@ -128,6 +132,7 @@ static const Key keys[] = {
   /* modifier                           key        function           argument */
   { MODKEY,                             XK_Return, spawn,             {.v = termcmd } },
   { MODKEY|ShiftMask,                   XK_Return, spawn,             {.v = dmenucmd} },
+  { MODKEY|ShiftMask|ControlMask,       XK_Return, spawn,             {.v = dmenuruncmd} },
   // { MODKEY,                             XK_q,      spawn,             {.v = browsercmd } },
   { MODKEY,                             XK_b,      togglebar,         {0} },
   { MODKEY,				XK_j,      focusstack,        {.i = +1 } },
